@@ -4,12 +4,21 @@ require_once 'src/http_request.php';
 require_once 'src/html_parser.php';
 require_once 'src/json_output.php';
 require_once 'src/get_list.php';
+
 $format = 'json';
 $formats = array('json');
 $name = null;
 $id = null;
 
 try {
+
+    // use https
+    if((empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "off") && $_SERVER['HTTP_HOST'] !== 'localhost'){
+        $redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        header('HTTP/1.1 301 Moved Permanently');
+        header('Location: ' . $redirect);
+        exit();
+    }
 
     // Liste der Plätze
     $gl = new get_list();
@@ -35,10 +44,9 @@ try {
 
     $parser = new html_parser($id);
     $ranges = $parser->parse();
-    unset ($parser);
 
     if ($format === 'json') {
-        $out = new json_output($id, $name, $ranges);
+        $out = new json_output($id, $name, $ranges, $parser->requestTime);
         $out->output();
     }
     

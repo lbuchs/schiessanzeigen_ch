@@ -1,2 +1,8 @@
 # IDE Ordner
 nbproject/
+
+# Logfile
+log/*
+
+# Cache
+cache/*.cache

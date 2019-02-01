@@ -7,6 +7,7 @@ class html_parser {
     protected $_base_url = 'https://www.vtg.admin.ch/de/aktuell/mitteilungen/schiessanzeigen/_jcr_content/contentPar/zensa_copy.ajax_zensa_detail.html/%ID%.html';
     protected $_id;
     protected $_ranges = array();
+    public $requestTime = null;
 
     public function __construct($id) {
         $this->_id = $id;
@@ -16,6 +17,7 @@ class html_parser {
     public function parse() {
         $req = new http_request(str_replace('%ID%', $this->_id, $this->_base_url));
         $html = $req->exec();
+        $this->requestTime = $req->getRequestTime();
         unset ($req);
 
         $matches = null;

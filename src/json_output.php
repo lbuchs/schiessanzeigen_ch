@@ -10,11 +10,13 @@ class json_output {
     protected $_timespans;
     protected $_id;
     protected $_name;
+    protected $_cacheRequestTime;
 
-    public function __construct($id=null, $name=null, $timespans=array()) {
+    public function __construct($id=null, $name=null, $timespans=array(), $cacheRequestTime=null) {
         $this->_timespans = $timespans;
         $this->_id = $id;
         $this->_name = $name;
+        $this->_cacheRequestTime = $cacheRequestTime;
     }
 
     public function output() {
@@ -32,6 +34,7 @@ class json_output {
         $output->id = $this->_id;
         $output->name = $this->_name;
         $output->requestTime = date('r');
+        $output->cacheTime = date('r', $this->_cacheRequestTime);
         $output->times = $times;
 
         header('content-type: application/json');

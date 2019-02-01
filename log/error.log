@@ -1,0 +1,17 @@
+
+----------------------------------------
+Date: 2019-02-01 16:49:21
+Msg:  please provide name or id with HTTP GET
+Code: 0
+File: D:\htdocs\schiessanzeigen_ch\index.php
+Line: 42
+Trace:
+#0 {main}
+----------------------------------------
+Date: 2019-02-01 16:50:07
+Msg:  please provide name or id with HTTP GET
+Code: 0
+File: D:\htdocs\schiessanzeigen_ch\index.php
+Line: 42
+Trace:
+#0 {main}
