@@ -1,6 +1,5 @@
 <?php
 /**
- * 
  * @author Lukas Buchs
  */
 class html_parser {

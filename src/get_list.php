@@ -1,9 +1,6 @@
 <?php
 
-
 /**
- * Description of get_list
- *
  * @author Lukas Buchs
  */
 class get_list {

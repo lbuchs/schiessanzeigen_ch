@@ -2,11 +2,12 @@
 
 require_once 'src/http_request.php';
 require_once 'src/html_parser.php';
-require_once 'src/json_output.php';
 require_once 'src/get_list.php';
+require_once 'src/json_output.php';
+require_once 'src/html_output.php';
 
-$format = 'json';
-$formats = array('json');
+$format = 'html';
+$formats = array('json', 'html');
 $name = null;
 $id = null;
 
@@ -66,6 +67,11 @@ try {
         $out = new json_output($id, $name, $ranges, $parser->requestTime);
         $out->output();
 
+    } else if ($format === 'html') {
+        $out = new html_output($id, $name, $ranges, $parser->requestTime);
+        $out->output();
+
+
     } else if ($format === 'cmd') {
         // Keine Ausgabe.
     }
@@ -85,6 +91,10 @@ try {
 
     if ($format === 'json') {
         $out = new json_output($id, $name);
+        $out->errorOut($ex);
+
+    } else if ($format === 'html') {
+        $out = new html_output($id, $name);
         $out->errorOut($ex);
 
     } else if ($format === 'cmd') {

@@ -1,9 +1,6 @@
 <?php
 
-
-
 /**
- * 
  * @author Lukas Buchs
  */
 class json_output {
