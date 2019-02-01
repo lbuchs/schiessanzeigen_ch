@@ -18,43 +18,45 @@ class html_output {
 
     public function output() {
         header('content-type: text/html');
-        print("<!DOCTYPE html>\n");
-        print('<html><head><title>Schiessplatz ' . htmlspecialchars($this->_name) . '</title></head>');
-        print('<body style="font-family:sans-serif">');
-        print('
-            <table border="1" cellspacing="0" style="border-collapse:collapse;">
-                    <tbody>
-                            <tr>
-                                <td style="padding:2px 10px">ID:</td>
-                                <td style="padding:2px 10px">' . htmlspecialchars($this->_id) . '</td>
-                            </tr>
-                            <tr>
-                                <td style="padding:2px 10px">Name:</td>
-                                <td style="padding:2px 10px">' . htmlspecialchars($this->_name) . '</td>
-                            </tr>
-                            <tr>
-                                <td style="padding:2px 10px">Cache:</td>
-                                <td style="padding:2px 10px">' . htmlspecialchars(date('d.m.Y H:i', $this->_cacheRequestTime)) . '</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" style="padding:15px 2px 2px 10px">Zeiten:</td>
-                            </tr>');
+        $html = '
+            <table><tbody>
+                <tr>
+                    <td>Name:</td>
+                    <td>' . htmlspecialchars($this->_name) . '</td>
+                </tr>
+                <tr class="id">
+                    <td>ID:</td>
+                    <td>' . htmlspecialchars($this->_id) . '</td>
+                </tr>
+                <tr class="cache">
+                    <td>Cache:</td>
+                    <td>' . htmlspecialchars(date('d.m.Y H:i', $this->_cacheRequestTime)) . '</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="times_header">Zeiten:</td>
+                </tr>';
 
         foreach ($this->_timespans as $timespan) {
-            print('
-                <tr>
-                    <td colspan="2" style="padding:2px 10px">' . htmlspecialchars($timespan->start->format('D, d.m.Y H:i'). ' - ' . $timespan->end->format('H:i')) . '</td>
+
+            $todayCls = $timespan->start->format('d.m.Y') === date('d.m.Y') ? ' today' : '';
+
+            $html .= '
+                <tr class="timerow spacer">
+                    <td colspan="2"></td>
                 </tr>
-                <tr>
-                    <td colspan="2" style="padding:2px 10px">' . htmlspecialchars($timespan->comment) . '</td>
+                <tr class="timerow' . $todayCls . '">
+                    <td colspan="2">' . htmlspecialchars($timespan->start->format('D, d.m.Y H:i'). ' - ' . $timespan->end->format('H:i')) . '</td>
                 </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>');
+                <tr class="timerow' . $todayCls . '">
+                    <td colspan="2">' . htmlspecialchars($timespan->comment) . '</td>
+                </tr>
+                ';
         }
 
-        print('</tbody></table></body></html>');
-
+        $html .= '</tbody></table>';
+        $output = file_get_contents('template/template.html');
+        $output = str_replace(array('%TITLE%', '%TABLE%'), array(htmlspecialchars($this->_name), $html), $output);
+        print $output;
     }
 
     public function errorOut(Throwable $t) {

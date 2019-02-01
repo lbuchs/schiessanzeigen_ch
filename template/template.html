@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!--
+Copyright (C) 2019 Lukas Buchs
+MIT License
+-->
+<html>
+    <head>
+        <title>%TITLE%</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                font-family: sans-serif;
+                font-size: 1em;
+                color: #333;
+            }
+
+            .tablecontainer {
+                display: flex;
+                justify-content: center;
+            }
+
+            .tablecontainer h1 {
+                font-size: 1.2em;
+                text-align: center;
+            }
+
+            table {                
+                border-collapse: collapse;
+                max-width: 100%;
+                margin-bottom: 2px;
+            }
+
+            table td {
+                padding: 2px 10px;
+                border: 1px solid #333;
+            }
+
+            td.times_header {
+                padding-top: 10px;
+                text-align: center;
+            }
+
+            tr.timerow.spacer td {
+                height: 2px;
+                padding: 0;
+                background-color: #333;
+            }
+            tr.timerow.today td {
+                background-color: #ffe9af;
+            }
+
+            tr.cache td, tr.id td {
+                font-size: 0.7em;
+                color: #555;
+            }
+
+            div.footer {
+                text-align: center;
+                font-size: 0.8em;
+                color: #555;
+                margin-bottom: 10px;
+            }
+            div.footer a {
+                color: #555;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="tablecontainer">
+            <div>
+                <h1>Schiessanzeigen %TITLE%</h1>
+                <div class="tablecontainer">
+                %TABLE%
+                </div>
+                <div class="footer">Ohne Gewähr. <a href="http://armee.ch/schiessanzeigen" target="_blank">Offizielle Publikation</a> beachten.</div>
+                <div class="footer">Para-Deltaclub Stockhorn</div>
+                <div class="footer"><a href="?name=%TITLE%&format=json">json</a> &middot; <a href="https://github.com/lbuchs/schiessanzeigen_ch" target="_blank">github</a></div>
+            </div>
+        </div>
+    </body>
+</html>

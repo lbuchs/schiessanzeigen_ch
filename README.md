@@ -8,3 +8,6 @@ Konvertierung der Schiessanzeigen von vtg.admin.ch in ein maschinenlesbares Form
 # Ziel
 Ziel ist eine automatisierte Übernahme der Aktivierungszeiten bestimmter Schiessplätze auf https://airspace.xcontest.org.
 Die Luftraumwarnung soll nur erscheinen, wenn der Schiessplatz aktiv ist. 
+
+# Abrufen
+Das Script kann unter https://schiessanzeigen.pdcs.ch/?name=Blumenstein&format=html abgerufen werden.
