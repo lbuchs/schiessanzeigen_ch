@@ -11,9 +11,15 @@ $name = null;
 $id = null;
 
 try {
+    error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+    $commandLine = isset($argv) && is_array($argv) && $argv;
+
+    if ($commandLine) {
+        chdir(dirname(__FILE__));
+    }
 
     // use https
-    if((empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "off") && $_SERVER['HTTP_HOST'] !== 'localhost'){
+    if(!$commandLine && (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "off") && $_SERVER['HTTP_HOST'] !== 'localhost'){
         $redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         header('HTTP/1.1 301 Moved Permanently');
         header('Location: ' . $redirect);
@@ -23,19 +29,30 @@ try {
     // Liste der Plätze
     $gl = new get_list();
 
-    if (array_key_exists('format', $_GET)) {
+    if (!$commandLine && array_key_exists('format', $_GET)) {
         if (in_array($_GET['format'], $formats)) {
             $format = $_GET['format'];
         }
+    } else if ($commandLine) {
+        $format = 'cmd';
     }
 
-    if (array_key_exists('name', $_GET) && $_GET['name']) {
+    if (!$commandLine && array_key_exists('name', $_GET) && $_GET['name']) {
         $name = $_GET['name'];
         $id = $gl->getIdByName($name);
 
-    } else if (array_key_exists('id', $_GET) && $_GET['id']) {
+    } else if (!$commandLine && array_key_exists('id', $_GET) && $_GET['id']) {
         $id = $_GET['id'];
         $name = $gl->getNameById($id);
+
+    } else if ($commandLine) {
+        foreach ($argv as $cmdArg) {
+            try {
+                $name = trim($cmdArg);
+                $id = $gl->getIdByName($name);
+                break;
+            } catch (Exception $ex) {}
+        }
     }
 
     if (!$name || !$id) {
@@ -48,6 +65,9 @@ try {
     if ($format === 'json') {
         $out = new json_output($id, $name, $ranges, $parser->requestTime);
         $out->output();
+
+    } else if ($format === 'cmd') {
+        // Keine Ausgabe.
     }
     
 } catch (Throwable $ex) {
@@ -66,5 +86,8 @@ try {
     if ($format === 'json') {
         $out = new json_output($id, $name);
         $out->errorOut($ex);
+
+    } else if ($format === 'cmd') {
+        print ($ex->getMessage());
     }
 }
