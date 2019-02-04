@@ -7,7 +7,6 @@
 class http_request {
     protected $_userAgent = null;
     protected $_timeout = 60;
-    protected $_cachetime = 23*3600;
     protected $_url = '';
     protected $_referer = null;
     protected $_requestTime = null;
@@ -69,7 +68,7 @@ class http_request {
         $cachefile = 'cache/' . md5($this->_url) . '.cache';
         if (is_file($cachefile)) {
             $ft = filectime($cachefile);
-            if ($ft && $ft+$this->_cachetime > time()) {
+            if ($ft && date('Y-m-d', $ft) === date('Y-m-d')) {
                 $this->_requestTime = $ft;
                 return file_get_contents($cachefile);
             }
