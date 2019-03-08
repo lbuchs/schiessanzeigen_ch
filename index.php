@@ -27,9 +27,7 @@ try {
         exit();
     }
 
-    // Liste der Plätze
-    $gl = new get_list();
-
+    // Format (default: html)
     if (!$commandLine && array_key_exists('format', $_GET)) {
         if (in_array($_GET['format'], $formats)) {
             $format = $_GET['format'];
@@ -38,13 +36,18 @@ try {
         $format = 'cmd';
     }
 
-    if (!$commandLine && array_key_exists('name', $_GET) && $_GET['name']) {
-        $name = $_GET['name'];
+    // Liste der Plätze
+    $gl = new get_list();
+
+    // request from xcontest server.
+    // if there is a need for more places in future, we can extend $name to a array
+    if (!$commandLine && array_key_exists('name', $_GET) && $_GET['name'] === 'places_xcontest') {
+        $name = 'Blumenstein';
         $id = $gl->getIdByName($name);
 
-    } else if (!$commandLine && array_key_exists('id', $_GET) && $_GET['id']) {
-        $id = $_GET['id'];
-        $name = $gl->getNameById($id);
+    } else if (!$commandLine && array_key_exists('name', $_GET) && $_GET['name']) {
+        $name = $_GET['name'];
+        $id = $gl->getIdByName($name);
 
     } else if ($commandLine) {
         foreach ($argv as $cmdArg) {
@@ -64,7 +67,14 @@ try {
     $ranges = $parser->parse();
 
     if ($format === 'json') {
-        $out = new json_output($id, $name, $ranges, $parser->requestTime);
+
+        $place = new stdClass();
+        $place->id = $id;
+        $place->name = $name;
+        $place->timespans = $ranges;
+        $place->requestTime = $parser->requestTime;
+
+        $out = new json_output(array($place));
         $out->output();
 
     } else if ($format === 'html') {
@@ -75,7 +85,7 @@ try {
     } else if ($format === 'cmd') {
         // Keine Ausgabe.
     }
-    
+
 } catch (Throwable $ex) {
     $msg = array(
         str_repeat('-', 40),

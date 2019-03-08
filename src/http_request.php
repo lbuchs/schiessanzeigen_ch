@@ -13,7 +13,7 @@ class http_request {
 
     public function __construct($url, $referer=null) {
         clearstatcache();
-        
+
         $this->_userAgent = 'Mozilla/5.0 ('. PHP_OS .'; x64; rv:1.0) php/' . phpversion() . ' github.com/lbuchs/schiessanzeigen_ch/0.1';
         $this->_url = $url;
         $this->_referer = $referer;
@@ -71,6 +71,8 @@ class http_request {
             if ($ft && date('Y-m-d', $ft) === date('Y-m-d')) {
                 $this->_requestTime = $ft;
                 return file_get_contents($cachefile);
+            } else {
+                unlink($cachefile);
             }
         }
 

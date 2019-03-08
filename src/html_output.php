@@ -77,6 +77,12 @@ class html_output {
         $html .= '</tbody></table>';
         $output = file_get_contents('template/template.html');
         $output = str_replace(array('%TITLE%', '%TABLE%'), array(htmlspecialchars($this->_name), $html), $output);
+
+        header('Content-Type: text/html; charset=utf-8');
+        header('Cache-Control: max-age=' . ($this->_cacheRequestTime+(3600*24) - time()));
+        header('Last-Modified: ' . date('r', $this->_cacheRequestTime));
+        header('Expires: ' . date('r', $this->_cacheRequestTime+(3600*24)));
+
         print $output;
     }
 
