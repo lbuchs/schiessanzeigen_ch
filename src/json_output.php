@@ -16,11 +16,15 @@ class json_output {
         $output->success = true;
         $output->requestTime = date('r');
         $output->requestTimeUnix = time();
+        $output->validFrom = date('r', strtotime(date('Y-m-d') . ' 00:00:00'));
+        $output->validFromUnix = strtotime(date('Y-m-d') . ' 00:00:00');
+        $output->validTo = date('r', strtotime(date('Y-m-d') . ' 00:00:00')+(3600*24*3)-1);
+        $output->validToUnix = strtotime(date('Y-m-d') . ' 00:00:00')+(3600*24*3)-1;
         $output->places = array();
 
         foreach ($this->_places as $place) {
             $times = array();
-            foreach ($place->timespans as $timespan) {
+            foreach ($place->timespans as $timespan) {                
                 $o = new stdClass();
                 $o->start = $timespan->start->format('r');
                 $o->startUnix = $timespan->start->getTimestamp();
