@@ -14,7 +14,7 @@ class http_request {
     public function __construct($url, $referer=null) {
         clearstatcache();
 
-        $this->_userAgent = 'Mozilla/5.0 ('. PHP_OS .'; x64; rv:1.0) php/' . phpversion() . ' github.com/lbuchs/schiessanzeigen_ch/0.1';
+        $this->_userAgent = 'Mozilla/5.0 ('. PHP_OS .'; x64; rv:1.0) php/' . phpversion() . ' github.com/lbuchs/schiessanzeigen_ch/0.2';
         $this->_url = $url;
         $this->_referer = $referer;
     }
@@ -68,9 +68,12 @@ class http_request {
         $cachefile = 'cache/' . md5($this->_url) . '.cache';
         if (is_file($cachefile)) {
             $ft = filectime($cachefile);
-            if ($ft && date('Y-m-d', $ft) === date('Y-m-d')) {
+
+            // when cache is from the same day or younger than 1h, use cache
+            if ($ft && (date('Y-m-d', $ft) === date('Y-m-d') || $ft+3600 > time() )) {
                 $this->_requestTime = $ft;
                 return file_get_contents($cachefile);
+                
             } else {
                 unlink($cachefile);
             }

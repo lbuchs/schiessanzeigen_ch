@@ -40,13 +40,23 @@ class html_output {
                 </tr>
                 <tr class="cache">
                     <td>Cache:</td>
-                    <td>' . htmlspecialchars(date('d.m.Y H:i', $this->_cacheRequestTime)) . '</td>
+                    <td>' . htmlspecialchars($this->_cacheRequestTime ? date('d.m.Y H:i', $this->_cacheRequestTime) : 'Fehler') . '</td>
                 </tr>
                 <tr>
                     <td colspan="2" class="times_header">Zeiten:</td>
                 </tr>';
 
-        if (!$hasToday) {
+        if (!$this->_cacheRequestTime && !$this->_timespans) {
+            $html .= '
+                <tr class="timerow spacer">
+                    <td colspan="2"></td>
+                </tr>
+                <tr class="timerow today">
+                    <td colspan="2" style="text-align:center">Unbekannt.<br>Offizielle Publikation beachten</td>
+                </tr>
+                ';
+
+        } else if (!$hasToday) {
             $html .= '
                 <tr class="timerow spacer">
                     <td colspan="2"></td>

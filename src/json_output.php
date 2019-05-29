@@ -24,7 +24,7 @@ class json_output {
 
         foreach ($this->_places as $place) {
             $times = array();
-            foreach ($place->timespans as $timespan) {                
+            foreach ($place->timespans as $timespan) {
                 $o = new stdClass();
                 $o->start = $timespan->start->format('r');
                 $o->startUnix = $timespan->start->getTimestamp();
@@ -50,9 +50,15 @@ class json_output {
     public function errorOut(Throwable $t) {
         $output = new stdClass();
         $output->success = false;
+        $output->message = $t->getMessage();
         $output->requestTime = date('r');
         $output->requestTimeUnix = time();
-        $output->message = $t->getMessage();
+        $output->validFrom = date('r', strtotime(date('Y-m-d') . ' 00:00:00')-1);
+        $output->validFromUnix = strtotime(date('Y-m-d') . ' 00:00:00')-1;
+        $output->validTo = date('r', strtotime(date('Y-m-d') . ' 00:00:00'));
+        $output->validToUnix = strtotime(date('Y-m-d') . ' 00:00:00');
+        $output->places = array();
+
 
         header('content-type: application/json');
         print(json_encode($output));

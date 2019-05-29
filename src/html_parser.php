@@ -13,9 +13,9 @@ class html_parser {
     }
 
 
-    public function parse() {
+    public function parse($cache=true) {
         $req = new http_request(str_replace('%ID%', $this->_id, $this->_base_url));
-        $html = $req->exec();
+        $html = $req->exec($cache);
         $this->requestTime = $req->getRequestTime();
         unset ($req);
 
@@ -55,7 +55,7 @@ class html_parser {
                 $this->_handleDateNode($node, $matches[1]);
             }
         }
-        
+
         if ($node->hasChildNodes()) {
             foreach ($node->childNodes as $childNode) {
                 $this->_recursiveSearchHtml($childNode);
@@ -82,7 +82,7 @@ class html_parser {
             $range->comment = trim($comment);
             $this->_ranges[] = $range;
             unset ($range);
-        }        
+        }
     }
 
     protected function _getSplitTimes($html) {
@@ -91,7 +91,7 @@ class html_parser {
         $matches = null;
         if (preg_match('/schiessen([^<>]+)unterbrochen/i', $html, $matches)) {
             $line = $matches[1];
-            
+
             $matches = array();
             if (preg_match_all('/([0-9]{1,2}:?[0-9]{1,2})\s*-\s*([0-9]{1,2}:?[0-9]{1,2})/', $line, $matches,  PREG_SET_ORDER)) {
                 foreach ($matches as $match) {

@@ -8,9 +8,9 @@ class get_list {
     protected $_schiessplaetze = array();
 
 
-    public function __construct() {
+    public function __construct($cache=true) {
         $req = new http_request($this->_listUrl);
-        $json = $req->exec();
+        $json = $req->exec($cache);
         unset ($req);
 
         $json = json_decode($json);
@@ -27,7 +27,7 @@ class get_list {
         if (in_array($name, $this->_schiessplaetze)) {
             return array_search($name, $this->_schiessplaetze);
         }
-        
+
         throw new Exception('place name ' . $name . ' not found.');
     }
 

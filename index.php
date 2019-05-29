@@ -37,7 +37,7 @@ try {
     }
 
     // Liste der Plätze
-    $gl = new get_list();
+    $gl = new get_list(!$commandLine);
 
     // request from xcontest server.
     // if there is a need for more places in future, we can extend $name to a array
@@ -64,7 +64,7 @@ try {
     }
 
     $parser = new html_parser($id);
-    $ranges = $parser->parse();
+    $ranges = $parser->parse(!$commandLine);
 
     if ($format === 'json') {
 
