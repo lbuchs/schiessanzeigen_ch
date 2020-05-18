@@ -36,31 +36,36 @@ try {
         $format = 'cmd';
     }
 
-    // Liste der Plätze
-    $gl = new get_list(!$commandLine);
-
     // request from xcontest server.
     // if there is a need for more places in future, we can extend $name to a array
     if (!$commandLine && array_key_exists('name', $_GET) && $_GET['name'] === 'places_xcontest') {
         $name = 'Blumenstein';
-        $id = $gl->getIdByName($name);
 
     } else if (!$commandLine && array_key_exists('name', $_GET) && $_GET['name']) {
         $name = $_GET['name'];
-        $id = $gl->getIdByName($name);
 
     } else if ($commandLine) {
         foreach ($argv as $cmdArg) {
             try {
                 $name = trim($cmdArg);
-                $id = $gl->getIdByName($name);
                 break;
             } catch (Exception $ex) {}
         }
     }
 
-    if (!$name || !$id) {
-        throw new Exception('please provide name or id with HTTP GET');
+    if (!$name) {
+        if ($format === 'html') {
+            header('Location: ./?name=Blumenstein');
+        }
+        throw new Exception('please provide name with HTTP GET');
+    }
+
+    // Liste der Plätze
+    $gl = new get_list(!$commandLine);
+    $id = $gl->getIdByName($name);
+
+    if (!$id) {
+        throw new Exception('id for station not found');
     }
 
     $parser = new html_parser($id);
@@ -74,7 +79,7 @@ try {
         $place->timespans = $ranges;
         $place->requestTime = $parser->requestTime;
 
-        $out = new json_output(array($place));
+        $out = new json_output(array($place), $name);
         $out->output();
 
     } else if ($format === 'html') {
