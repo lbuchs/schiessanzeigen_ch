@@ -6,3 +6,4 @@ log/*
 
 # Cache
 cache/*.cache
+cache/tmp.csv

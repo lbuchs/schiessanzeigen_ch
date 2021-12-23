@@ -24,9 +24,14 @@ class json_output {
         $output->validToUnix = strtotime(date('Y-m-d') . ' 00:00:00')+(3600*24*3)-1;
         $output->places = array();
 
+        $lastEnd = 0;
         foreach ($this->_places as $place) {
             $times = array();
             foreach ($place->timespans as $timespan) {
+
+                $timespan->start->setTimezone(new DateTimeZone('UTC'));
+                $timespan->end->setTimezone(new DateTimeZone('UTC'));
+
                 $o = new stdClass();
                 $o->start = $timespan->start->format('r');
                 $o->startUnix = $timespan->start->getTimestamp();
@@ -34,19 +39,26 @@ class json_output {
                 $o->endUnix = $timespan->end->getTimestamp();
                 $o->comment = $timespan->comment;
                 $times[] = $o;
+
+                $lastEnd = max($lastEnd, $timespan->end->getTimestamp());
             }
 
             $p = new stdClass();
-//            $p->id = $place->id;
+            $p->id = $place->id;
             $p->name = $place->name;
-            $p->cacheTime = date('r', $place->requestTime);
-            $p->cacheTimeUnix = $place->requestTime;
             $p->timespans = $times;
             $output->places[] = $p;
         }
 
-        header('content-type: application/json');
-        print(json_encode($output));
+        // Gültig bis zum grössten Datum
+        if ($lastEnd > 0) {
+            $output->validTo = date('r', $lastEnd);
+            $output->validToUnix = $lastEnd;
+        }
+
+        header('Content-Type: application/json');
+        header('Access-Control-Allow-Origin: *');
+        print(json_encode($output, JSON_PRETTY_PRINT));
     }
 
     public function errorOut(Throwable $t) {
@@ -75,7 +87,7 @@ class json_output {
             }
 
             $p = new stdClass();
-//            $p->id = null;
+            $p->id = '1314.010';
             $p->name = $this->_name;
             $p->cacheTime = date('r', time());
             $p->cacheTimeUnix = time();
@@ -83,7 +95,8 @@ class json_output {
             $output->places[] = $p;
         }
 
-        header('content-type: application/json');
+        header('Content-Type: application/json');
+        header('Access-Control-Allow-Origin: *');
         print(json_encode($output));
     }
 

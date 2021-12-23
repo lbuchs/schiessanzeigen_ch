@@ -1,8 +1,8 @@
 <?php
 
 require_once 'src/http_request.php';
+require_once 'src/get_csv.php';
 require_once 'src/html_parser.php';
-require_once 'src/get_list.php';
 require_once 'src/json_output.php';
 require_once 'src/html_output.php';
 
@@ -36,54 +36,31 @@ try {
         $format = 'cmd';
     }
 
-    // request from xcontest server.
-    // if there is a need for more places in future, we can extend $name to a array
-    if (!$commandLine && array_key_exists('name', $_GET) && $_GET['name'] === 'places_xcontest') {
-        $name = 'Blumenstein';
+    $id = '1314.010'; // id of Blumenstein
+    $name = 'Blumenstein';
 
-    } else if (!$commandLine && array_key_exists('name', $_GET) && $_GET['name']) {
-        $name = $_GET['name'];
+    // datenabfrage
+//    $getCsv = new get_csv($id);
+//    $timespans = $getCsv->getTimespans();
+//    unset ($getCsv);
 
-    } else if ($commandLine) {
-        foreach ($argv as $cmdArg) {
-            try {
-                $name = trim($cmdArg);
-                break;
-            } catch (Exception $ex) {}
-        }
-    }
-
-    if (!$name) {
-        if ($format === 'html') {
-            header('Location: ./?name=Blumenstein');
-        }
-        throw new Exception('please provide name with HTTP GET');
-    }
-
-    // Liste der Plätze
-    $gl = new get_list(!$commandLine);
-    $id = $gl->getIdByName($name);
-
-    if (!$id) {
-        throw new Exception('id for station not found');
-    }
-
-    $parser = new html_parser($id);
-    $ranges = $parser->parse(!$commandLine);
+    // HTML parsen
+    $getHtml = new html_parser($id);
+    $timespans = $getHtml->parse(!$commandLine);
 
     if ($format === 'json') {
 
         $place = new stdClass();
         $place->id = $id;
         $place->name = $name;
-        $place->timespans = $ranges;
-        $place->requestTime = $parser->requestTime;
+        $place->timespans = $timespans;
+        $place->requestTime = $getHtml->requestTime;
 
         $out = new json_output(array($place), $name);
         $out->output();
 
     } else if ($format === 'html') {
-        $out = new html_output($id, $name, $ranges, $parser->requestTime);
+        $out = new html_output($id, $name, $timespans, $getHtml->requestTime);
         $out->output();
 
 

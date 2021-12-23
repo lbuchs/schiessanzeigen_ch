@@ -26,8 +26,6 @@ class html_output {
         }
 
 
-        header('content-type: text/html');
-
         $html = '
             <table><tbody>
                 <tr>
@@ -37,10 +35,6 @@ class html_output {
                 <tr class="id">
                     <td>ID:</td>
                     <td>' . htmlspecialchars($this->_id) . '</td>
-                </tr>
-                <tr class="cache">
-                    <td>Cache:</td>
-                    <td>' . htmlspecialchars($this->_cacheRequestTime ? date('d.m.Y H:i', $this->_cacheRequestTime) : 'Fehler') . '</td>
                 </tr>
                 <tr>
                     <td colspan="2" class="times_header">Zeiten:</td>
@@ -62,10 +56,19 @@ class html_output {
                     <td colspan="2"></td>
                 </tr>
                 <tr class="timerow today">
-                    <td colspan="2">Heute kein Schiessbetrieb.</td>
+                    <td colspan="2" style="text-align:center">Heute kein Schiessbetrieb.</td>
                 </tr>
                 ';
         }
+
+        if ($this->_cacheRequestTime && !$this->_timespans) {
+            $html .= '
+                <tr class="timerow">
+                    <td colspan="2" style="text-align:center;font-style:italic;">Kein geplanter Schiessbetrieb in den nächsten Tagen.</td>
+                </tr>
+                ';
+        }
+
 
         foreach ($this->_timespans as $timespan) {
 
